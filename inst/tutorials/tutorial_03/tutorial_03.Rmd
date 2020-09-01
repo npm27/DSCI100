@@ -1,0 +1,178 @@
+---
+title: "Tutorial_03"
+author: "Anjali Thapar"
+date: "8/04/2020"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(gapminder)
+
+tutorial_options(exercise.timelimit = 60)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+## Welcome
+
+The goal of this tutorial is to introduce you to Descriptive Statistics and Exploratory Data Analysis (EDA). Descriptive statistics are used to summarize and characterize a data set in a clear and understandable way. Researchers try to describe the main features of numerical and categorical information using numerical summaries (such as mean, standard deviation, range, percentage) and graphical summaries (such as bar graphs, histograms, boxplots, scatterplots).
+ 
+* Describing data using numerical summary measures 
+* Describing data using graphical summaries
+* Summary
+
+## Descriptive Statistics
+
+You will be downloading and analyzing all kinds of data files this semester, from numbers to text to pictures. We will follow similar steps every time. The initial steps are to load and then explore the data file. We will talk in greater detail about how to explore data files below. For now, let's introduce the first dataset that we will work with.
+
+The data file is called *gapminder* and includes a subset of the original data set from (http://gapminder.org). For each of 142 countries, the package provides values for life expectancy, GDP per capita, and population, every five years, from 1952 to 2007.
+
+We've preloaded the packages for this tutorial with 
+
+```{r eval = FALSE}
+library(tidyverse) # loads dplyr, ggplot2, and others
+library(gapminder)
+```
+
+To load the data, simply type in the name of the dataset in R.
+
+```{r open_dataset, exercise=TRUE}
+gapminder
+```
+
+The first thing you should *always* do when you load a new data set is to look at it. This dataset is saved in a “spreadsheet”-type format. This is probably the most common way data are collected and saved. These “spreadsheet”-type datasets are called data frames in R, where each row represents an observation, and each column a variable. We are viewing the first 10 rows of the data frame and we can see that the data frame has 1,704 rows. We can also see that the data frame has 6 variables listed in the columns. Observe that there are different types of variables. Some of the variables like year, lifeExp, pop and gdpPercap are what we will call quantitative variables. These variables are numerical in nature. Other variables like country and continent are character or text based in nature. The data type character is used when storing text, known as strings in R.
+
+
+## Data Exploration of Nominal and Ordinal Data
+
+Exploratory data analysis (EDA) is an approach to analyzing data sets using numerical summary statistics and graphs to summarize its main characteristics. There are several R functions specifically designed to allow users to inspect and explore a data frame. We will review a few of the more commonly used functions below. Review the output of each function. 
+
+```{r dim, exercise=TRUE}
+dim(gapminder)
+class(gapminder$continent)
+typeof(gapminder$year)
+```
+
+Let’s unpack the output of each of these functions.
+
+The function *dim(gapminder)* returned the output: 1704 x 6. R is telling us that this particular data frame has 1704 rows corresponding to different observations and 6 columns corresponding to 6 variables describing each observation. Here, each row (observation) represents a country and the 6 columns represent the 6 different variables that were included for this dataset.
+
+```{r glimpse, exercise=TRUE}
+glimpse(gapminder)
+```
+
+The function *glimpse(gapminder)* will return the first few entries of each variable in a row after the variable name. In addition, the data type of the variable is given immediately after each variable’s name inside < >. Here, *int* and *dbl* refer to “integer” and “double”, which are computer coding terminology for quantitative/numerical variables. Integers are numeric data without decimals. “Doubles” take up twice the size to store on a computer compared to integers. In contrast, *chr* refers to “character”, which is computer terminology for text data. In this data frame the variables country and continent are categorical variables and have been coded as a factor *fct*. Factor variables are a special case and are used to represent character variables. Factor variables are used when there are a limited number of unique character strings. 
+
+```{r summary, exercise=TRUE}
+summary(gapminder)
+```
+
+The function *summary(gapminder)* returns the 6 variable names and for numerical variables provides the values for the minimum, 1st quantile (25%), median (50%), mean, 3rd quantile (75%), maximum and the number of NAs (if appliciable). For the categorical variables (country and continent), summary returns the count of the categorical variables. We can see from the output of the *summary()* function that there are 12 years (rows/observations) for each country in this data set and that some continents have more entries. The table() function can be used to output the number of unique entries of countries  by continent over time. This also allows us to see if the dataset is complete or if we have any missing entries in this data set?
+
+```{r table, exercise=TRUE}
+table(gapminder$continent, gapminder$year)  
+```
+
+### Exercise 1
+
+What are some things that we have learned about the gapminder dataset using these functions? 
+
+```{r summariseex4, exercise = TRUE}
+
+```
+
+
+Let's think about some questions we might want to answer with these data:
+
+- Which major has the lowest unemployment rate?
+- Which major has the highest percentage of women?
+- How do the distributions of median income compare across major categories?
+- Do women tend to choose majors with lower or higher earnings?
+
+In the next section we aim to answer these questions.
+
+## Data Exploration of Interval and Ratio Data
+
+Data visualization is the creation and study of the visual representation of data. By visualizing data, we gain valuable insights we cannot obtain from just looking at the raw data values. At their most basic, graphics/plots/charts (we will use these terms interchangeably in this course) provide a nice way to explore the patterns in data, such as the presence of outliers, distributions of individual variables, and relationships between groups of variables. Graphics are designed to emphasize the findings and insights you want your audience to understand. This does, however, require a balancing act. On the one hand, you want to highlight as many interesting findings as possible. On the other hand, you don’t want to include so much information that it overwhelms your audience.
+
+### ggplot2
+
+There are many approaches/tools for visualizing data in R. In this course, we will primarily use the ggplot2 package, developed by Leland Wilkinson (Wilkinson 2005), as it provides an easy way to customize your plots. We will go over some of the most communi Examine the output and make sense of the data. f interpret the . 
+
+Bar plots are often used to visualize the distribution of a discrete variable, like continent. With ggplot2, this is relatively easy:
+
+```{r plot1, exercise=TRUE}
+ggplot(data = gapminder, mapping = aes(x = continent,  fill=continent)) +
+  geom_bar()
+```
+
+
+```{r plot2, exercise=TRUE}
+ggplot(gapminder, aes(x=continent, fill=continent)) + 
+    geom_bar(aes(y=..count../12)) +
+    labs(y="Number of countries") +
+    guides(fill=FALSE)
+```
+
+There are several continuous variables in this data set: life expectancy (lifeExp), population (pop) and gross domestic product per capita (gdpPercap) for each year and country. For such variables, density plots provide a useful graphical summary.
+
+We will start with lifeExp. The simplest plot uses this as the horizontal axis, aes(x=lifeExp) and then adds geom_density() to calculate and plot the smoothed frequency distribution.
+
+```{r plo3, exercise=TRUE}
+ggplot(data=gapminder, aes(x=lifeExp)) + 
+    geom_density(size=1.5, fill="pink", alpha=0.3)
+```
+
+The plot of lifeExp is bimodal, and looks weird. Maybe this is hiding a difference among countries in different continents. Let's take a look by plotting the data for each continent as a different color an using transparent colors to make it easier to see the different distributions across continent.
+
+```{r plot4, exercise=TRUE}
+ggplot(data=gapminder, aes(x=lifeExp, fill=continent)) +
+    geom_density(alpha=0.3)
+```
+
+Boxplots. AAlternatively, you might want to view the distributions of life expectancy by another visual summary, grouped by continent. All you need to do is change the aesthetic to show continent on one axis, and life expectancy (lifeExp) on the other.Boxplots 
+
+As we will see, plots also help us to identify patterns and outliers in our data. We’ll see that a common extension of these ideas is to compare the distribution of one numerical variable, such as what are the center and spread of the values, as we go across the levels of a different categorical variable
+
+```{r plot5, exercise=TRUE}
+ggplot(data = gapminder, mapping = aes(x = continent, y = lifeExp, color=continent)) +
+  geom_boxplot()+
+  labs(y="Life Expectancy in Years")
+```
+
+How has life expectancy changed over time? Let's look at trends over time by plotting the median life expectancy on the y-axis and year on the x-axis for each continent. This plot is called a scatterplot. 
+
+
+```{r plot6, exercise=TRUE}
+gapminder %>%
+    group_by(continent, year) %>%
+    summarise(lifeExp=median(lifeExp)) %>%
+    ggplot(aes(x=year, y=lifeExp, color=continent)) +
+     geom_line(size=1) + 
+     geom_point(size=1.5)
+```
+
+
+```{r plot7, exercise=TRUE}
+gapminder %>%
+    group_by(continent, year) %>%
+    summarise(lifeExp=median(lifeExp)) %>%
+    ggplot(aes(x=year, y=lifeExp, color=continent)) +
+    geom_point(size=1.5) +
+    geom_smooth(aes(fill=continent), method="lm")
+```
+
+## Summary
+
+In this tutorial, you learned how to open a dataset and run commands to explore different aspects of the data set and to use ggplot2 to plot the data. 
+
+Please post any issues and/or questions with the concepts reviewed in this tutorial in the Piazza Forum Labeled Tutorial-01.
+
+Upon completion of this tutorial, go to the course Moodle page and complete Assessment Activity #1. The completed assessment activity is due by midnight on Wednesday Sept. 16.
+
+    
